@@ -157,12 +157,13 @@ a.download-main {
 	margin-bottom: 3px;
 	padding-bottom: 3px;
 	border-bottom: 1px dotted #DEDEDE;
+	overflow: hidden;
 }
 
 .contrib-description ul.profile-icons {
 	padding: 0;
 	float: right;
-	margin-top: -5px;
+	margin-top: -2px;
 }
 
 .contrib-description .icon-subscribe, .contrib-description .icon-unsubscribe {
