@@ -1,10 +1,9 @@
 /**
- * Titania Customisation Database Style Sheet
- * @version $Id$
- * @copyright (c) 2008 phpBB Customisation Database Team ( http://www.phpbb.com )
- */
+* Titania Customisation Database Style Sheet
+* @copyright (c) 2008 phpBB Customisation Database Team ( http://www.phpbb.com )
+*/
 
 @import url("common.css");
 @import url("tweaks.css");
-@import url("jquery.lightbox-0.5.css");
-@import url("jquery-ui-1.7.2.css");
+@import url("colorbox.css");
+@import url("jquery-ui-1.8.17.custom.css");

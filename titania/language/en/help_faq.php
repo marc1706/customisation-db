@@ -1,13 +1,9 @@
 <?php
 /**
 *
-* help_faq [English]
-*
-* @package Titania language
-* @version $Id: help_faq.php
-* @author: RMcGirr83
-* @copyright (c) 2010 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -68,7 +64,7 @@ $help = array(
 	),
 	array(
 		0 => 'Rules',
-		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is the hope of phpBB that the author of the contribution provide you, the end user, with support in using their customisation.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
+		1 => 'With the introduction of Titania, the rules involved to use it are very simple.  As in the past, the saying “You should seek support within the modification/style topic where you got the customisation” pertains.  While the support Team of phpBB.com does their best to assist you in running and using your forum they can not, and are not expected to, provide support for any customisation/contribution.  It is our hope that the author of a contribution provides end user support.  Please remember that all authors are volunteers who have spent their time in providing an enhancement to the phpBB software.  The saying “You get more flies with honey than you do with vinegar” applies, so please keep this in mind when requesting support for a customisation (eg, be nice in the way you ask).'
 	),
 	array(
 		0 => 'How to get support',
@@ -126,7 +122,7 @@ $help = array(
 	),
 	array(
 		0 => 'Who will be validating my contribution?',
-		1 => 'If it is a Modification it will be validated by the MOD Team and Junior MOD Validators or occassionally a Development Team Member. For a style it will be validated by the Styles Team and Junior Style Validators. For a convertor it will be validated by a Support or Development Team Member. For a bridge it will be validated by a MOD or Development Team Member. Translations are all checked by the Translations & IST Manager, ameeck. Offical Tools are tested and created by the phpBB.com Teams.'
+		1 => 'If it is a Modification it will be validated by the MOD Team and Junior MOD Validators or occassionally a Development Team Member. For a style it will be validated by the Styles Team and Junior Style Validators. For a convertor it will be validated by a Support or Development Team Member. For a bridge it will be validated by a MOD or Development Team Member. Language Packs are all checked by the International Manager. Official Tools are tested and created by the phpBB.com Teams.'
 	),
 );
 

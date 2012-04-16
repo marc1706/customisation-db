@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -31,6 +30,13 @@ class titania_type_mod extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 1;
+
+	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = 'mod';
 
 	/**
 	 * For the url slug

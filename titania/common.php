@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package Titania
- * @version $Id$
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+*
+*/
 
 /**
  * @ignore
@@ -16,8 +15,14 @@ if (!defined('IN_TITANIA'))
 	exit;
 }
 
+// This gets checked in page_header() in functions.php to see whether we're in community
+if (!defined('NOT_IN_COMMUNITY'))
+{
+	define('NOT_IN_COMMUNITY', true);
+}
+
 // Version number (only used for the installer)
-define('TITANIA_VERSION', '0.3.10');
+define('TITANIA_VERSION', '0.3.16');
 
 define('PHPBB_USE_BOARD_URL_PATH', true);
 if (!defined('IN_TITANIA_INSTALL'))
@@ -98,7 +103,7 @@ if (isset($_GET['cache']) && $_GET['cache'] == 'purge' && phpbb::$auth->acl_get(
 {
 	titania::$cache->purge();
 
-	titania::error_box('SUCCESS', phpbb::$user->lang['CACHE_PURGED']);
+	titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['CACHE_PURGED']);
 }
 
 // admin requested a sync
@@ -119,6 +124,6 @@ if (isset($_GET['sync']) && phpbb::$auth->acl_get('a_'))
 			$sync->$method[0]();
 		}
 
-		titania::error_box('SUCCESS', 'Sync Success');
+		titania::error_box(phpbb::$user->lang['SUCCESSBOX_TITLE'], phpbb::$user->lang['SYNC_SUCCESS']);
 	}
 }

@@ -1,7 +1,5 @@
-/**
- * @version $Id$
- * common.css
- */
+/* General Markup Styles
+---------------------------------------- */
 
 /* Common styles
 --------------------------------------------- */
@@ -137,8 +135,12 @@ span.corners-top.main-corners span, span.corners-bottom.main-corners span {
 	background: transparent none no-repeat 0 0;
 	margin: 10px auto 0 auto;
 }
+.colorizeit-button {
+	background: transparent none no-repeat 0 0;
+	margin: 4px auto 0 auto;
+}
 
-a.download-main {
+a.download-main, a.colorizeit-main {
 	height: 21px;
 	padding-top: 30px;
 	padding-right: 41px;
@@ -466,6 +468,10 @@ ul.rating li, ul.rated li {
 	margin-top: 1px;
 }
 
+.queue-actions li div a {
+	padding: 0 5px;
+}
+
 .queue-actions li a:hover {
 	text-decoration: none;
 	color: #1A2124;
@@ -480,6 +486,7 @@ ul.rating li, ul.rated li {
 .approve 			{ padding-left: 21px !important; background-image: url("{T_THEME_PATH}/images/icon_approve.gif"); }
 .change_status		{ padding-left: 15px !important; background-image: url("{T_THEME_PATH}/images/icon_change_status.gif"); }
 .repack 			{ padding-left: 17px !important; background-image: url("{T_THEME_PATH}/images/icon_repack.gif"); }
+.misc				{ padding-left: 19px !important; background-image: url("{T_THEME_PATH}/images/icon_misc.gif"); }
 
 .queue-actions div.subactions {
 	position: absolute;
@@ -521,6 +528,32 @@ ul.rating li, ul.rated li {
 
 /* General
 --------------------------------------------- */
+
+/* ColorBox adjustments; primarily switching control buttons to top */
+#cboxLoadedContent {
+	margin-top: 28px;
+	margin-bottom: 0 !important;
+	text-align: left;
+}
+
+#cboxLoadedContent h3 {
+	top: 0;
+	width: 100%;
+	position: absolute;
+}
+
+#cboxNext, #cboxPrevious, #cboxClose, #cboxTitle, #cboxCurrent {
+	top: 0;
+	bottom: auto !important;
+}
+
+#cboxCurrent {
+	top: 5px;
+}
+
+.dialog-options {
+	text-align: center;
+}
 
 .hidden {
 	display: none !important;

@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -21,6 +20,9 @@ if (!defined('IN_PHPBB'))
 {
 	define('IN_PHPBB', true);
 }
+
+// Category option flags
+define('TITANIA_CAT_FLAG_DEMO', 1);
 
 // Contrib status
 define('TITANIA_CONTRIB_NEW', 1); // Does not have any validated revisions; Hidden from category listing, shown if directly linked to
@@ -60,6 +62,7 @@ define('TITANIA_POST', 10);
 define('TITANIA_SCREENSHOT', 11);
 define('TITANIA_ATTENTION', 12);
 define('TITANIA_TRANSLATION', 13);
+define('TITANIA_CLR_SCREENSHOT', 14); // ColorizeIt sample image
 
 // Errorbox types
 define('TITANIA_ERROR', 1);

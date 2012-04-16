@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -38,9 +37,9 @@ class phpbb_version_test
 
 		// Does the zip for this exist?
 		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $new_phpbb_version);
-		if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
+		if (!file_exists(TITANIA_ROOT . 'includes/phpbb_packages/phpBB-' . $version . '.zip'))
 		{
-			trigger_back(sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip'));
+			trigger_back(sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'includes/phpbb_packages/phpBB-' . $version . '.zip'));
 		}
 
 		$phpbb_version_branch = (int) $new_phpbb_version[0] . (int) $new_phpbb_version[2];

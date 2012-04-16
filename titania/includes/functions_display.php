@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -47,7 +46,7 @@ function titania_topic_folder_img(&$folder_img, &$folder_alt, $post_count = 0, $
 		$folder_new = 'topic_unread';
 
 		// Hot topic threshold is for posts in a topic, which is replies + the first post. ;)
-		if (phpbb::$config['hot_threshold'] && ($post_count + 1) >= phpbb::$config['hot_threshold'])
+		if (phpbb::$config['hot_threshold'] && ($post_count + 1) >= phpbb::$config['hot_threshold'] && !$locked)
 		{
 			$folder .= '_hot';
 			$folder_new .= '_hot';

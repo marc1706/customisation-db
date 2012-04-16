@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -47,5 +46,6 @@ define('TITANIA_TAG_APPLIED_TABLE',				$table_prefix . 'tag_applied');
 define('TITANIA_TAG_FIELDS_TABLE',				$table_prefix . 'tag_fields');
 define('TITANIA_TAG_TYPES_TABLE',				$table_prefix . 'tag_types');
 define('TITANIA_TOPICS_TABLE',					$table_prefix . 'topics');
+define('TITANIA_TOPICS_POSTED_TABLE',			$table_prefix . 'topics_posted');
 define('TITANIA_TRACK_TABLE',					$table_prefix . 'track');
 define('TITANIA_WATCH_TABLE',					$table_prefix . 'watch');

@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package titania
- * @version $Id$
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+*
+*/
 
 /**
 * @ignore
@@ -185,6 +184,9 @@ if ($attention_id || ($object_type && $object_id))
 				// Load z topic
 				$post->topic->topic_id = $post->topic_id;
 				$post->topic->load();
+
+				// Update topics posted table
+				$post->topic->update_posted_status('add', $post->post_user_id);
 
 				// Update first/last post?
 				if ($post->topic->topic_first_post_time > $post->post_time)

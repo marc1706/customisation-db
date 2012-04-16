@@ -86,9 +86,21 @@ $(document).ready(function(){
 	);
 
 	// Ajax Quick Edit
-	$('.postbody > .profile-icons > .edit-icon').click(function() {
+	$('.postbody > .profile-icons > .edit-icon').click(function(e) {
 		var postbody = $(this).parent().parent();
+
+		// Return false if the form is already open
+		if ($('form', postbody).length)
+		{
+			e.preventDefault();
+			return;
+		}
+
 		var post = $(postbody).children('.content');
+
+		// Store the original post in case the user cancels the edit
+		$(post).after($(post).clone());
+		$(post).next().addClass('hidden original_post');
 
 		// Ajax time
 		$.ajax({
@@ -103,7 +115,7 @@ $(document).ready(function(){
 				$(quickeditor).elastic();
 				$(quickeditor).tabby();
 
-				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function() {
+				$(quickeditor).parent().children('.submit-buttons').children('[name=submit]').click(function(e) {
 					$(this).parent().hide();
 
 					// Ajax time
@@ -113,17 +125,31 @@ $(document).ready(function(){
 						data: $(quickeditor).parent().serialize() + '&submit=1',
 						success: function(html){
 							$(quickeditor).parent().replaceWith('<div class="content text-content">' + html + '</div>');
+							var subject = $('.content:not(.original_post)', postbody).children('span:first-child');
+							$('h3 a', postbody).html($(subject).html());
+							$(subject).remove();
+							$('.original_post', postbody).remove();
 						}
 					});
 
 					// Do not redirect
-					return false;
+					e.preventDefault();
 				});
 			}
 		});
 
 		// Do not follow the link
-		return false;
+		e.preventDefault();
+	});
+
+	// Canceled quick edit, so display original post again
+	$('.postbody #cancel').live('click', function(event) {
+		event.preventDefault();
+
+		var postbody = $(this).parents('.postbody');
+
+		$('form', postbody).remove();
+		$('.original_post', postbody).removeClass('hidden');
 	});
 
 	// Show only the first five revisions
@@ -151,6 +177,36 @@ $(document).ready(function(){
 		$(this).children('.subactions').toggle();
 	}, function() {
 		$(this).children('.subactions').toggle();
+	});
+	
+	$('.download-main').click(function() {
+		var cease = readCookie('cdb_ignore_subscription');
+		
+		if (!cease && $('.dialog#subscription').length) {
+			$.colorbox({html: $('.dialog#subscription').html(), width: '400px'});
+		}
+	});
+	
+	$('#cboxLoadedContent #cancel').live('click', function(event) {
+		event.preventDefault();
+		$.colorbox.close();
+	});
+	
+	$('#cboxLoadedContent #cease').live('click', function(event) {
+		event.preventDefault();
+		createCookie('cdb_ignore_subscription', 'true', 365);
+		$.colorbox.close();
+	});
+  
+	// Remove -mode_view from screenshot links as we'll be displaying the image inline, so file.php should not
+	// wrap the image in html in IE
+	$.each($('a.screenshot'), function() {this.href = this.href.replace('-mode_view', '');});
+
+	// Prevent the user from submitting a form more than once.
+	$('input[type="submit"]').click(function(event) {
+		// Since the submit value is no longer passed once the button is disabled, we must hide the original button and create a clone.
+		$(this).after($(this).clone()).addClass('hidden');
+		$(this).parent().children('input[type="submit"]:not(.hidden)').attr('disabled', 'disabled').addClass('disabled');
 	});
 });
 

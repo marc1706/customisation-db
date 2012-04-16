@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package titania
- * @version $Id$
- * @copyright (c) 2008 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+*
+*/
 
 /**
 * @ignore
@@ -53,6 +52,7 @@ switch ($page)
 	case 'manage' :
 	case 'revision' :
 	case 'revision_edit' :
+	case 'demo' :
 		include(TITANIA_ROOT . 'contributions/' . $page . '.' . PHP_EXT);
 	break;
 
@@ -140,12 +140,11 @@ function load_contrib($contrib_id = false)
 		),
 	);
 
-	// Display nav menu
-	$page = request_var('page', '');
-	titania::generate_nav($nav_ary, $page, 'details');
-
 	// Search for a category with the same name as the contrib type.  This is a bit ugly, but there really isn't any better option
 	$categories_ary = titania::$cache->get_categories();
+	titania::$contrib->get_categories();
+	titania::$contrib->integrate_demo = false;
+
 	foreach ($categories_ary as $category_id => $category_row)
 	{
 		$category_row['category_name'] = (isset(phpbb::$user->lang[$category_row['category_name']])) ? phpbb::$user->lang[$category_row['category_name']] : $category_row['category_name'];
@@ -159,10 +158,24 @@ function load_contrib($contrib_id = false)
 			titania::generate_breadcrumbs(array(
 				$category_object->category_name => titania_url::build_url($category_object->get_url()),
 			));
-
-			break;
+		}
+		
+		if (isset(titania::$contrib->categories[$category_id]) && $category_row['category_options'] & TITANIA_CAT_FLAG_DEMO)
+		{
+			titania::$contrib->integrate_demo = true;
+			phpbb::$template->assign_var('S_INTEGRATE_DEMO', true);
 		}
 	}
+	
+	$nav_ary['demo'] = array(
+		'title'		=> 'CONTRIB_DEMO',
+		'url'		=> titania::$contrib->get_url('demo'),
+		'auth'		=> (titania::$contrib->contrib_demo && titania::$contrib->contrib_status == TITANIA_CONTRIB_APPROVED && titania::$contrib->integrate_demo) ? true : false,
+	);
+	
+	// Display nav menu
+	$page = request_var('page', '');
+	titania::generate_nav($nav_ary, $page, 'details');
 
 	titania::generate_breadcrumbs(array(
 		titania::$contrib->contrib_name	=> titania::$contrib->get_url(),

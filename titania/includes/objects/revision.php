@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -75,6 +74,7 @@ class titania_revision extends titania_database_object
 			'revision_submitted'	=> array('default' => false), // False if it is still in the process of being submitted/verified; True if submission has finished
 			'revision_queue_id'		=> array('default' => 0),
 			'revision_license'		=> array('default' => ''),
+			'revision_clr_options'  => array('default' => ''),
 		));
 
 		if ($contrib)
@@ -158,6 +158,13 @@ class titania_revision extends titania_database_object
 				$install_time = phpbb::$user->lang('INSTALL_MINUTES', (int) ($this->install_time / 60));
 			}
 		}
+		
+        // ColorizeIt stuff
+        $url_colorizeit = '';
+        if($this->revision_status == TITANIA_REVISION_APPROVED && strlen(titania::$config->colorizeit) && $this->contrib && $this->contrib->has_colorizeit())
+        {
+            $url_colorizeit = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->attachment_id . '&amp;sample=' . $this->contrib->clr_sample['attachment_id'];
+        }
 
 		phpbb::$template->assign_block_vars($tpl_block, array(
 			'REVISION_ID'		=> $this->revision_id,
@@ -172,6 +179,7 @@ class titania_revision extends titania_database_object
 			'INSTALL_LEVEL'		=> ($this->install_level > 0) ? phpbb::$user->lang['INSTALL_LEVEL_' . $this->install_level] : '',
 
 			'U_DOWNLOAD'		=> $this->get_url(),
+			'U_COLORIZEIT'      => $url_colorizeit,
 			'U_EDIT'			=> ($this->contrib && ($this->contrib->is_author || $this->contrib->is_active_coauthor || titania_types::$types[$this->contrib->contrib_type]->acl_get('moderate'))) ? $this->contrib->get_url('revision_edit', array('revision' => $this->revision_id)) : '',
 			'U_VIEW_INSTALL'	=> (titania_types::$types[$this->contrib->contrib_type]->display_install_file && file_exists(titania::$config->modx_storage_path . $this->revision_id)) ? titania_url::build_url('view-install', array('id' => $this->revision_id)) : '',
 

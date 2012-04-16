@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -78,7 +77,7 @@ function titania_decode_message(&$message, $bbcode_uid = '')
 	$message = str_replace('&nbsp;', ' ', $message);
 
 	// Decode HTML entities, else bbcode reparsing will fail
-	$message = html_entity_decode($message);
+	$message = html_entity_decode($message, ENT_QUOTES);
 
 	// With magic_quotes_gpc on slashes are stripped too many times, so add them
 	$message = (STRIP) ? addslashes($message) : $message;

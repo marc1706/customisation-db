@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -31,6 +30,13 @@ class titania_type_style extends titania_type_base
 	 * @var int type id (for custom types not specified in titania to start, please start with 10 in case we add any extra later)
 	 */
 	public $id = 2;
+	
+	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = 'style';
 
 	/**
 	 * For the url slug
@@ -108,6 +114,11 @@ class titania_type_style extends titania_type_base
 			case 'moderate' :
 				return phpbb::$auth->acl_gets(array('u_titania_mod_style_moderate', 'u_titania_mod_contrib_mod'));
 			break;
+			
+			// Can edit ColorizeIt settings
+			case 'colorizeit' :
+			    return phpbb::$auth->acl_get('u_titania_mod_style_clr');
+            break;
 		}
 
 		return false;
@@ -164,7 +175,7 @@ class titania_type_style extends titania_type_base
 	*/
 	public function uninstall()
 	{
-		if (isset(phpbb::$config['titania_num_mods']))
+		if (isset(phpbb::$config['titania_num_styles']))
 		{
 			if (!class_exists('umil'))
 			{
@@ -179,6 +190,7 @@ class titania_type_style extends titania_type_base
 				'u_titania_mod_style_queue',
 				'u_titania_mod_style_validate',
 				'u_titania_mod_style_moderate',
+				'u_titania_mod_style_clr',
 			));
 
 			// Mod count holder
@@ -231,5 +243,19 @@ class titania_type_style extends titania_type_base
 		$contrib_tools->remove_temp_files();
 
 		return array(phpbb::$user->lang['LICENSE_FILE_MISSING']);
+	}
+
+	/**
+	* Function to fix package name to ensure naming convention is followed
+	*
+	* @param $contrib Contribution object
+	* @param $revision Revision object
+	* @param $revision_attachment Attachment object
+	*/		
+	public function fix_package_name($contrib, $revision, $revision_attachment)
+	{
+		$new_real_filename = $contrib->contrib_name_clean . '_' . strtolower($revision->revision_version) . '.' . $revision_attachment->extension;
+
+		$revision_attachment->change_real_filename($new_real_filename);
 	}
 }

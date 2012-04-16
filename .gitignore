@@ -1,2 +1,6 @@
 titania/config.php
+titania/store/search/*
+titania/files/*
 Thumbs.db
+.DS_Store
+*.bak

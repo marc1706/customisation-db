@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -18,6 +17,13 @@ if (!defined('IN_TITANIA'))
 
 class titania_types
 {
+	/**
+	 * The type name
+	 *
+	 * @var string (any lang key that includes the type should match this value)
+	 */
+	public $name = '';
+	
 	/**
 	* Store the types we've setup
 	*
@@ -254,5 +260,17 @@ class titania_type_base
 	public function upload_check($revision_attachment)
 	{
 		return array();
+	}
+
+	/**
+	* Function to fix package name to ensure naming convention is followed
+	*
+	* @param $contrib Contribution object
+	* @param $revision Revision object
+	* @param $revision_attachment Attachment object
+	*/	
+	public function fix_package_name($contrib, $revision, $revision_attachment)
+	{
+		return;
 	}
 }

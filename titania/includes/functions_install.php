@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -143,6 +142,73 @@ function titania_custom($action, $version)
 
 				case '0.3.9' :
 					titania_sync::attachments('hash');
+				break;
+
+				case '0.3.11' :
+					$with_preview = $needs_preview = array();
+
+					//Need a list of all objects with previews
+					$sql = 'SELECT object_id FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE is_preview = 1 AND object_type = ' . TITANIA_SCREENSHOT;
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$with_preview[] = $row['object_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					//Now we get a list of attachments to update
+					$sql = 'SELECT MIN(attachment_id) AS attachment_id, object_id FROM ' . TITANIA_ATTACHMENTS_TABLE . '
+						WHERE is_preview = 0 AND object_type = ' . TITANIA_SCREENSHOT . (sizeof($with_preview) ? ' AND ' . phpbb::$db->sql_in_set('object_id', $with_preview, true) : '') . '
+						GROUP BY object_id';
+					$result = phpbb::$db->sql_query($sql);
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$needs_preview[] = $row['attachment_id'];
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					//Finally let's update
+					if (sizeof($needs_preview))
+					{
+						$sql = 'UPDATE ' . TITANIA_ATTACHMENTS_TABLE . ' SET is_preview = 1 WHERE ' . phpbb::$db->sql_in_set('attachment_id', $needs_preview);
+						phpbb::$db->sql_query($sql);
+					}
+				break;
+
+				case '0.3.16' :
+					$sql = 'SELECT DISTINCT topic_id, post_user_id
+						FROM ' . TITANIA_POSTS_TABLE . ' 
+						WHERE post_approved = 1 AND post_deleted = 0';
+					$result = phpbb::$db->sql_query($sql);
+					
+					$data = array();
+					$i = 0;
+
+					while ($row = phpbb::$db->sql_fetchrow($result))
+					{
+						$batch = floor($i / 500);
+						
+						$data[$batch][] = array(
+							'topic_id'		=> (int) $row['topic_id'],
+							'user_id'		=> (int) $row['post_user_id'],
+							'topic_posted'	=> 1
+						);
+						++$i;
+					}
+					phpbb::$db->sql_freeresult($result);
+
+					if (sizeof($data))
+					{
+						phpbb::$db->sql_query('TRUNCATE ' . TITANIA_TOPICS_POSTED_TABLE);
+
+						foreach ($data as $batch => $rows)
+						{
+							phpbb::$db->sql_multi_insert(TITANIA_TOPICS_POSTED_TABLE, $rows);
+						}
+						
+						unset($data);
+					}				
 				break;
 			}
 		break;

@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -367,7 +366,8 @@ class titania_contrib_tools
 			}
 			else
 			{
-				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $this->new_dir_name . '/' . $sub_dir . $item);
+				$new_dir_name = (!preg_match('#'.$this->new_dir_name.'#', $sub_dir)) ? $this->new_dir_name . '/' : '';
+				$zip->add_custom_file($this->unzip_dir . $sub_dir . $item, $new_dir_name . $sub_dir . $item);
 			}
 		}
     }
@@ -423,18 +423,19 @@ class titania_contrib_tools
 	{
 		$version = preg_replace('#[^a-zA-Z0-9\.\-]+#', '', $version);
 
-		$phpbb_root = TITANIA_ROOT . 'store/phpbb_packages/extracted/' . $version . '/';
+		$phpbb_root = TITANIA_ROOT . 'store/extracted/' . $version . '/';
+		$phpbb_package = TITANIA_ROOT . 'includes/phpbb_packages/phpBB-' . $version . '.zip';
 
 		if (!file_exists($phpbb_root . 'common.php'))
 		{
-			if (!file_exists(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip'))
+			if (!file_exists($phpbb_package))
 			{
-				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], 'store/phpbb_packages/phpBB-' . $version . '.zip');
+				$this->error[] = sprintf(phpbb::$user->lang['FILE_NOT_EXIST'], $phpbb_package);
 				return false;
 			}
 
 			// Unzip to our temp directory
-			$this->extract(TITANIA_ROOT . 'store/phpbb_packages/phpBB-' . $version . '.zip', $phpbb_root);
+			$this->extract($phpbb_package, $phpbb_root);
 
 			// Find the phpBB root
 			$package_root = $this->find_root($phpbb_root, 'common.php');
@@ -574,7 +575,7 @@ class titania_contrib_tools
 	{
 		// Find the main modx file
 		$modx_root = $this->find_root();
-echo $modx_root;
+
 		if ($modx_root === false)
 		{
 			titania::add_lang('contributions');
@@ -691,6 +692,8 @@ echo $modx_root;
 		$package_root = $this->find_root(false, 'style.cfg');
 		$stylecfg = parse_cfg_file($this->unzip_dir . $package_root . '/style.cfg');
 		$style_root = $phpbb_root_path . 'styles/' . basename(strtolower(str_replace(' ', '_', $stylecfg['name']))) . '_' . $contrib->contrib_id . '/';
+		
+		$this->rmdir_recursive($style_root, false);
 
 		$this->mvdir_recursive($this->unzip_dir . $package_root, $style_root, false);
 		$this->rmdir_recursive($this->unzip_dir);
@@ -1044,7 +1047,7 @@ parse_css_file = {PARSE_CSS_FILE}
 
 			if (is_dir($target_filename . $item))
 			{
-				$this->rmdir_recursive($target_filename . $item . '/');
+				$this->rmdir_recursive($target_filename . $item . '/', ($check_minimum_directory) ? true : false);
 			}
 			else
 			{
@@ -1112,7 +1115,7 @@ parse_css_file = {PARSE_CSS_FILE}
 		// If minimum directory is false, we check the store, upload path, and temp path
 		if ($minimum_directory === false)
 		{
-			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path)) ? true : false;
+			return ($this->check_filesystem_path($directory, TITANIA_ROOT . 'store/') || $this->check_filesystem_path($directory, titania::$config->upload_path) || $this->check_filesystem_path($directory, titania::$config->contrib_temp_path) || $this->check_filesystem_path($directory, TITANIA_ROOT . 'includes/')) ? true : false;
 		}
 
 		// Find the directory (ignore files and roll back through non-existant directories)

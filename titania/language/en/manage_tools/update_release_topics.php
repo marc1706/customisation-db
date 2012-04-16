@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id: update_release_topics.php 1032 2010-04-09 00:03:25Z rmcgirr83 $
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -39,7 +38,7 @@ if (empty($lang) || !is_array($lang))
 
 $lang = array_merge($lang, array(
 	'UPDATE_RELEASE_TOPICS'				=> 'Update all contrib release topics in forum database',
-	'UPDATE_RELEASE_TOPICS_COMPLETE'	=> 'All contrib release topics was updated!',
-	'UPDATE_RELEASE_TOPICS_CONFIRM'		=> 'Are you sure you want to update all contrib release topics in forum database? This can take a significantly long period of time.',
-	'UPDATE_RELEASE_TOPICS_PROGRESS'	=> '%1$s topics completed of %2$s. Please wait...',
+	'UPDATE_RELEASE_TOPICS_COMPLETE'	=> 'All contrib release topics have been updated.',
+	'UPDATE_RELEASE_TOPICS_CONFIRM'		=> 'Are you sure you want to update all contrib release topics in forum database?  This can take a significantly long period of time.',
+	'UPDATE_RELEASE_TOPICS_PROGRESS'	=> '%1$d topics completed of %2$d. Please wait…',
 ));

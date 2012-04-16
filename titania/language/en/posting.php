@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -52,6 +51,7 @@ Validation staff may also post questions to the authors here so please reply wit
 
 Note that by default this topic is private between authors and validators and cannot be seen by the public.',
 	'QUEUE_DISCUSSION_TOPIC_TITLE'		=> 'Validation Discussion - %s',
+	'QUOTE'								=> 'Quote',
 
 	'REPORT_POST_CONFIRM'				=> 'Use this form to report the selected post to the forum moderators and board administrators. Reporting should generally be used only if the post breaks forum rules.',
 

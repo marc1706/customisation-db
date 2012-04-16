@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
-* @copyright (c) 2009 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 * Customisation Database (Titania) Configuration File.
 */
@@ -30,7 +29,7 @@ $config = array(
 	*/
 	'phpbb_versions' => array(
 		'20'	=> array('latest_revision' => '23', 'name' => 'phpBB 2.0.x', 'allow_uploads' => false),
-		'30'	=> array('latest_revision' => '8', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
+		'30'	=> array('latest_revision' => '10', 'name' => 'phpBB 3.0.x', 'allow_uploads' => true),
 	),
 
 	/**

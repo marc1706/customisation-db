@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -53,6 +52,7 @@ $lang = array_merge($lang, array(
 
 	'CACHE_PURGED'				=> 'Cache has been successfully purged',
 	'CATEGORY'					=> 'Category',
+	'CATEGORIES'				=> 'Categories',
 	'CATEGORY_CHILD_AS_PARENT'	=> 'The chosen parent category cannot be selected because it is a child of this category.',
 	'CATEGORY_DELETED'			=> 'Category Deleted',
 	'CATEGORY_DESC'				=> 'Category Description',
@@ -60,6 +60,7 @@ $lang = array_merge($lang, array(
 	'CATEGORY_HAS_CHILDREN'		=> 'This category cannot be deleted because it contains children categories.',
 	'CATEGORY_INFORMATION'		=> 'Category Information',
 	'CATEGORY_NAME'				=> 'Category Name',
+	'CATEGORY_OPTIONS'			=> 'Category Options',
 	'CATEGORY_TYPE'				=> 'Category Type',
 	'CATEGORY_TYPE_EXPLAIN'		=> 'The type of contributions this category will hold. Leave unset to not accept contributions.',
 	'CAT_ADDONS'				=> 'Add-ons',
@@ -81,6 +82,13 @@ $lang = array_merge($lang, array(
 	'CAT_TOOLS'					=> 'Tools',
 	'CLOSED_BY'					=> 'Closed by',
 	'CLOSED_ITEMS'				=> 'Closed Items',
+	'COLORIZEIT_COLORS'         => 'Colour scheme',
+	'COLORIZEIT_DOWNLOAD'       => 'Change colour scheme.',
+	'COLORIZEIT_DOWNLOAD_STYLE' => 'Change colour scheme and download',
+	'COLORIZEIT_MANAGE'         => 'ColorizeIt configuration',
+	'COLORIZEIT_MANAGE_EXPLAIN' => 'In order to activate ColorizeIt for this style, you need to upload sample image and change default color scheme. Sample image must be in GIF format, should not be animated and size must be between 200x300 and 500x600 pixels. Sample should not be scaled, it should not include colours that are not available in style, it should not include anti aliased text. <a href="http://www.colorizeit.com/advanced.html?do=tutorial_sample">Follow this URL</a> to read a full tutorial.',
+	'COLORIZEIT_SAMPLE'         => 'Show Colours Scheme Editor',
+	'COLORIZEIT_SAMPLE_EXPLAIN' => 'Add colours to editor by picking them from a sample image, then copy colours scheme string from text field below editor to text field below this text and click "Submit" to save changes.',
 	'CONFIRM_PURGE_CACHE'		=> 'Are you sure you want to purge the cache?',
 	'CONTINUE'					=> 'Continue',
 	'CONTRIBUTION'				=> 'Contribution',
@@ -173,7 +181,9 @@ $lang = array_merge($lang, array(
 	'STICKIES'					=> 'Stickies',
 	'SUBSCRIBE'					=> 'Subscribe',
 	'SUBSCRIPTION_NOTIFICATION'	=> 'Subscription Notification',
-
+	'SUCCESSBOX_TITLE'			=> 'Success',
+	'SYNC_SUCCESS'				=> 'Sync Success',
+	
 	'TITANIA_DISABLED'			=> 'The Customisation Database is temporarily disabled, please try again in a few minutes.',
 	'TITANIA_INDEX'				=> 'Customisation Database',
 	'TOTAL_CONTRIBS'			=> '%d Contributions',
@@ -184,8 +194,8 @@ $lang = array_merge($lang, array(
 	'TOTAL_RESULTS_ONE'			=> '1 Result',
 	'TOTAL_TOPICS'				=> '%d Topics',
 	'TOTAL_TOPICS_ONE'			=> '1 Topic',
-	'TRANSLATION'				=> 'Translation',
-	'TRANSLATIONS'				=> 'Translations',
+	'TRANSLATION'				=> 'Language Pack',
+	'TRANSLATIONS'				=> 'Language Packs',
 	'TYPE'						=> 'Type',
 
 	'UNDELETE_TOPIC'			=> 'Undelete Topic',

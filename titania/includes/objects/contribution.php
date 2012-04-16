@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -47,7 +46,7 @@ class titania_contribution extends titania_message_object
 	 * @var string
 	 */
 	protected $object_type = TITANIA_CONTRIB;
-
+	
 	/**
 	 * Author & co-authors of this contribution
 	 *
@@ -71,6 +70,11 @@ class titania_contribution extends titania_message_object
 	public $screenshots;
 
 	/**
+	 * Categories in which the contrib resides in.
+	 */
+	 public $categories = array();
+	 
+	/**
 	 * is_author (true when visiting user is the author)
 	 * is_active_coauthor (true when visiting user is an active co-author)
 	 * is_coauthor (true when visiting user is a non-active co-author)
@@ -78,6 +82,13 @@ class titania_contribution extends titania_message_object
 	public $is_author = false;
 	public $is_active_coauthor = false;
 	public $is_coauthor = false;
+
+	/**
+	 * ColorizeIt sample row
+	 *
+	 * @var array
+     */
+    public $clr_sample = false;
 
 	/**
 	 * Constructor class for the contribution object
@@ -121,6 +132,12 @@ class titania_contribution extends titania_message_object
 			// Translation items
 			'contrib_iso_code'				=> array('default' => ''),
 			'contrib_local_name'			=> array('default' => ''),
+			
+			// ColorizeIt stuff
+			'contrib_clr_colors'            => array('default' => ''),
+
+			// Author does not provide support
+			'contrib_limited_support'		=> array('default' => 0),
 		));
 
 		// Hooks
@@ -346,6 +363,34 @@ class titania_contribution extends titania_message_object
 	}
 
 	/**
+	 * Get all categories that a contribution resides in.
+	 */	
+	public function get_categories()
+	{
+		if (sizeof($this->categories))
+		{
+			return;
+		}
+		
+		$sql = 'SELECT category_id 
+		FROM ' . TITANIA_CONTRIB_IN_CATEGORIES_TABLE . ' 
+		WHERE contrib_id =' . (int) $this->contrib_id;
+		
+		$result = phpbb::$db->sql_query($sql);
+		
+		$contrib_categories = array();
+		$categories = titania::$cache->get_categories();
+		
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$contrib_categories[$row['category_id']] = $categories[$row['category_id']];
+		}
+		phpbb::$db->sql_freeresult($result);
+		
+		$this->categories = $contrib_categories;
+	}
+
+	/**
 	* Immediately increases the view counter for this contribution
 	*
 	* @return void
@@ -388,6 +433,7 @@ class titania_contribution extends titania_message_object
 			'CONTRIB_UPDATE_DATE'			=> ($this->contrib_last_update) ? phpbb::$user->format_date($this->contrib_last_update) : '',
 			'CONTRIB_STATUS'				=> $this->contrib_status,
 			'CONTRIB_SCREENSHOT'			=> ($this->screenshots) ? $this->screenshots->preview_image() : false,
+			'CONTRIB_LIMITED_SUPPORT'		=> $this->contrib_limited_support,
 
 			'CONTRIB_LOCAL_NAME'			=> $this->contrib_local_name,
 			'CONTRIB_ISO_CODE'				=> $this->contrib_iso_code,
@@ -412,7 +458,7 @@ class titania_contribution extends titania_message_object
 
 			'U_VIEW_DEMO'					=> $this->contrib_demo,
 		);
-
+		
 		// Ignore some stuff before it is submitted else we can cause an error
 		if ($this->contrib_id)
 		{
@@ -439,6 +485,12 @@ class titania_contribution extends titania_message_object
 
 				'JS_CONTRIB_TRANSLATION'		=> !empty($this->contrib_iso_code) ? 'true' : 'false', // contrib_iso_code is a mandatory field and must be included with all translation contributions
 			));
+			
+            // ColorizeIt stuff
+            if(strlen(titania::$config->colorizeit) && $this->has_colorizeit() && isset($this->download['attachment_id']))
+            {
+                $vars['U_COLORIZEIT'] = 'http://' . titania::$config->colorizeit_url . '/custom/' . titania::$config->colorizeit . '.html?id=' . $this->download['attachment_id']  . '&amp;sample=' . $this->clr_sample['attachment_id'];
+            }
 		}
 
 		// Hooks
@@ -447,7 +499,7 @@ class titania_contribution extends titania_message_object
 		// Display real author
 		if ($return)
 		{
-			$vars = array_merge($vars, $this->author->assign_details(true));
+			$vars['AUTHOR_NAME_FULL'] = $this->author->get_username_string();
 		}
 		else
 		{
@@ -503,6 +555,17 @@ class titania_contribution extends titania_message_object
 			if ($this->screenshots)
 			{
 				$this->screenshots->parse_attachments($message = false, false, false, 'screenshots');
+			}
+
+			// Display categories
+			$this->get_categories();
+			$category = new titania_category();
+			
+			foreach ($this->categories as $category_row)
+			{
+				$category->__set_array($category_row);
+				
+				phpbb::$template->assign_block_vars('categories', $category->assign_display(true));
 			}
 		}
 
@@ -1039,6 +1102,9 @@ class titania_contribution extends titania_message_object
 
 		if (sizeof($active))
 		{
+			// First check that each author has a author row.
+			$this->validate_author_row($active);
+
 			$sql_ary = array();
 			foreach ($active as $user_id)
 			{
@@ -1060,6 +1126,9 @@ class titania_contribution extends titania_message_object
 
 		if (sizeof($nonactive))
 		{
+			// First check that each author has a author row.
+			$this->validate_author_row($nonactive);
+
 			$sql_ary = array();
 			foreach ($nonactive as $user_id)
 			{
@@ -1080,6 +1149,60 @@ class titania_contribution extends titania_message_object
 		}
 	}
 
+	/**
+	 * Check that each contributor has a author row.
+	 * If not create one.
+	 *
+	 * $author_arr[] = array(
+	 * 	'username' => 'user_id', // both are strings.
+	 * );
+	 *
+	 * @param array $author_arr, array with contributor data from set_coauthors()
+	 */
+	public function validate_author_row($author_arr)
+	{
+		// Always make sure that we actually got some data to work with...
+		if (empty($author_arr) || !is_array($author_arr))
+		{
+			return;
+		}
+
+		$sql = 'SELECT user_id FROM ' . TITANIA_AUTHORS_TABLE . '
+			WHERE ' . phpbb::$db->sql_in_set('user_id', $author_arr);
+		$result = phpbb::$db->sql_query($sql);
+
+		$existing = array();
+		while ($row = phpbb::$db->sql_fetchrow($result))
+		{
+			$existing[] = (int) $row['user_id'];
+		}
+		phpbb::$db->sql_freeresult($result);
+
+		if (sizeof($existing) == sizeof($author_arr))
+		{
+			// All co-authors found, we are done.
+			return;
+		}
+
+		$sql_ary = array();
+		foreach ($author_arr as $username => $user_id)
+		{
+			if (!in_array($user_id, $existing))
+			{
+				// This author needs to be created.
+				$sql_ary[] = array(
+					'user_id'		=> $user_id,
+					'author_desc' => '',
+				);
+			}
+		}
+
+		if (!empty($sql_ary))
+		{
+			phpbb::$db->sql_multi_insert(TITANIA_AUTHORS_TABLE, $sql_ary);
+		}
+	}
+
 	/*
 	 * Set a new contrib_user_id for the current contribution
 	 *
@@ -1091,6 +1214,8 @@ class titania_contribution extends titania_message_object
 		{
 			return;
 		}
+
+		$this->validate_author_row(array($user_id));
 
 		// Delete them from the co-authors list if they are in it...
 		$sql = 'SELECT COUNT(contrib_id) FROM ' . TITANIA_CONTRIB_COAUTHORS_TABLE . '
@@ -1265,6 +1390,20 @@ class titania_contribution extends titania_message_object
 				WHERE ' . phpbb::$db->sql_in_set('category_id', array_map('intval', $categories));
 			phpbb::$db->sql_query($sql);
 		}
+	}
+	
+	/**
+	* Check if ColorizeIt is available
+	*/
+	public function has_colorizeit($force_update = false)
+	{
+	    if($force_update || $this->clr_sample === false)
+	    {
+	        // get sample id from database
+            $attachment = new titania_attachment(TITANIA_CLR_SCREENSHOT, $this->contrib_id);
+            $this->clr_sample = $attachment->get_preview();
+	    }
+	    return is_array($this->clr_sample) && strlen($this->contrib_clr_colors) > 0;
 	}
 
 	/**

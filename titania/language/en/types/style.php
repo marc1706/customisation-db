@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -38,6 +37,10 @@ if (empty($lang) || !is_array($lang))
 //
 
 $lang = array_merge($lang, array(
+	'INTEGRATE_DEMO'					=> 'Integrate styles demo',
+	'NO_DEMO'							=> 'The contribution does not have a demo to display.',
+	'NO_STYLES'							=> 'There are no styles to display.',
+	'SELECT_STYLE'						=> 'Select a style',
 	'STYLE'								=> 'Style',
 	'STYLES'							=> 'Styles',
 	'STYLE_CREATE_PUBLIC'				=> '[b]Style name[/b]: %1$s

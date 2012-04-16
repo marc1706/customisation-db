@@ -1,9 +1,9 @@
 <?php
 /**
 *
-* @version $Id: update_release_topics.php 321 2010-03-06 06:27:41Z erikfrerejean $
-* @copyright (c) 2009 phpBB Group
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -121,7 +121,10 @@ class update_release_topics
 
 			$contrib = new titania_contribution();
 			$contrib->__set_array($row);
-			$contrib->download = $row;
+			$contrib->download = $revision;
+
+			$contrib->author = new titania_author();
+			$contrib->author->__set_array($row);
 
 			// Update the release topic
 			$contrib->update_release_topic();

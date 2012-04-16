@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -325,6 +324,13 @@ class titania
 	 */
 	public static function page_header($page_title = '')
 	{
+		// Titania must be initialized in order for page_header() to function properly.
+		// If it's not initialized at this point, it's most likely because phpBB called trigger_error() (which calls page_header()) while being initialized.
+		if (!isset(self::$time))
+		{
+			self::initialise();
+		}
+
 		if (!empty(titania::$hook) && titania::$hook->call_hook(array(__CLASS__, __FUNCTION__), $page_title))
 		{
 			if (titania::$hook->hook_return(array(__CLASS__, __FUNCTION__)))

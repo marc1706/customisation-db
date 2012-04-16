@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -242,6 +241,47 @@ class titania_topic extends titania_database_object
 	}
 
 	/**
+	* Update topic posted mark
+	*
+	* Based on code from phpBB's functions.php and functions_posting.php
+	*/
+	public function update_posted_status($mode = 'add', $user_id = false)
+	{
+		$user_id = (int) ($user_id) ? $user_id : phpbb::$user->data['user_id'];
+		$this->topic_id = (int) $this->topic_id;
+
+		if ($mode == 'add')
+		{
+			phpbb::$db->sql_return_on_error(true);
+
+			$sql_ary = array(
+				'user_id'		=> $user_id,
+				'topic_id'		=> $this->topic_id,
+				'topic_posted'	=> 1
+			);
+
+			phpbb::$db->sql_query('INSERT INTO ' . TITANIA_TOPICS_POSTED_TABLE . ' ' . phpbb::$db->sql_build_array('INSERT', $sql_ary));
+
+			phpbb::$db->sql_return_on_error(false);			
+		}
+		else if ($mode == 'remove')
+		{
+			$sql = 'SELECT post_id
+				FROM ' . TITANIA_POSTS_TABLE . '
+				WHERE post_user_id = ' . $user_id . ' AND topic_id = ' . $this->topic_id . '
+					AND post_approved = 1 AND post_deleted = 0';
+			phpbb::$db->sql_query_limit($sql, 1);
+			$post_id = phpbb::$db->sql_fetchfield('post_id');
+
+			if (!$post_id)
+			{
+				$sql = 'DELETE FROM ' . TITANIA_TOPICS_POSTED_TABLE . ' WHERE user_id = ' . $user_id . ' AND topic_id = ' . $this->topic_id;
+				phpbb::$db->sql_query($sql);
+			}
+		}
+	}
+
+	/**
 	* Assign details
 	*
 	* A little different from those in other classes, this one only returns the info ready for output
@@ -255,10 +295,13 @@ class titania_topic extends titania_database_object
 
 		$folder_img = $folder_alt = '';
 		$this->topic_folder_img($folder_img, $folder_alt);
+		
+		phpbb::_include('functions_display', 'topic_generate_pagination');
 
 		// To find out if we have any posts that need approval
 		$approved = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, false));
 		$total = titania_count::from_db($this->topic_posts, titania_count::get_flags(TITANIA_ACCESS_PUBLIC, false, true));
+		$sort = new titania_sort();
 
 		$details = array(
 			'TOPIC_ID'						=> $this->topic_id,
@@ -287,6 +330,7 @@ class titania_topic extends titania_database_object
 			'TOPIC_LAST_POST_USER_FULL'		=> get_username_string('full', $this->topic_last_post_user_id, $this->topic_last_post_username, $this->topic_last_post_user_colour, false, phpbb::append_sid('memberlist', 'mode=viewprofile')),
 			'TOPIC_LAST_POST_TIME'			=> phpbb::$user->format_date($this->topic_last_post_time),
 			'TOPIC_LAST_POST_SUBJECT'		=> censor_text($this->topic_last_post_subject),
+			'PAGINATION'					=> $sort->topic_generate_pagination(($this->get_postcount()-1), titania_url::append_url($this->get_url())),
 
 			'U_NEWEST_POST'					=> ($this->unread) ? titania_url::append_url($this->get_url(), array('view' => 'unread', '#' => 'unread')) : '',
 			'U_VIEW_TOPIC'					=> $this->get_url(),

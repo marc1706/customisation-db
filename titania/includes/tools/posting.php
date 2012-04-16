@@ -1,12 +1,11 @@
 <?php
 /**
- *
- * @package Titania
- * @version $Id$
- * @copyright (c) 2009 phpBB Customisation Database Team
- * @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
- *
- */
+*
+* @package Titania
+* @copyright (c) 2008 phpBB Customisation Database Team
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
+*
+*/
 
 /**
  * @ignore
@@ -266,6 +265,7 @@ class titania_posting
 			add_form_key('postform');
 
 			phpbb::$template->assign_vars(array(
+				'SUBJECT'		=> $post_object->post_subject,
 				'MESSAGE'		=> $post_message,
 
 				'U_QR_ACTION'	=> $post_object->get_url('quick_edit'),
@@ -308,11 +308,20 @@ class titania_posting
 		$for_edit = $post_object->generate_text_for_edit();
 
 		// Set the post text
+		$post_object->post_subject = utf8_normalize_nfc(request_var('subject', '', true));
 		$post_object->post_text = utf8_normalize_nfc(request_var('message', '', true));
 
 		// Generate for storage based on previous options
 		$post_object->generate_text_for_storage($for_edit['allow_bbcode'], $for_edit['allow_urls'], $for_edit['allow_smilies']);
-
+		
+		// If u_titania_mod_post_mod permission then no edit info
+		// Update edit info if user is editing his post, which is not the last within the topic.
+		if (!phpbb::$auth->acl_get('u_titania_mod_post_mod') && ($post_object->topic->topic_last_post_id != $post_object->post_id))
+		{
+			$post_object->post_edit_time = time();
+			$post_object->post_edit_user = phpbb::$user->data['user_id'];
+		}
+		
 		// Submit
 		$post_object->submit();
 
@@ -325,6 +334,7 @@ class titania_posting
 		$parsed_attachments = $attachments->parse_attachments($message);
 
 		// echo the message (returned to the JS to display in the place of the old message)
+		echo '<span>' . censor_text($post_object->post_subject) . '</span>';
 		echo $message;
 
 		garbage_collection();
@@ -825,7 +835,7 @@ class titania_posting
 						{
 							// Support topic reply
 							$email_vars = array(
-								'NAME'			=> $post_object->topic->topic_subject,
+								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
 							);
@@ -834,7 +844,7 @@ class titania_posting
 						else
 						{
 							$email_vars = array(
-								'NAME'		=> $post_object->topic->topic_subject,
+								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'	=> titania_url::append_url($post_object->topic->get_url(), array('view' => 'unread', '#' => 'unread')),
 							);
 							titania_subscriptions::send_notifications(TITANIA_TOPIC, $post_object->topic_id, 'subscribe_notify.txt', $email_vars, $post_object->post_user_id);
@@ -846,7 +856,7 @@ class titania_posting
 						{
 							// New support topic
 							$email_vars = array(
-								'NAME'			=> $post_object->topic->topic_subject,
+								'NAME'			=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'		=> $post_object->topic->get_url(),
 								'CONTRIB_NAME'	=> titania::$contrib->contrib_name,
 							);
@@ -855,7 +865,7 @@ class titania_posting
 						else
 						{
 							$email_vars = array(
-								'NAME'		=> $post_object->topic->topic_subject,
+								'NAME'		=> htmlspecialchars_decode($post_object->topic->topic_subject),
 								'U_VIEW'	=> $post_object->topic->get_url(),
 							);
 							titania_subscriptions::send_notifications($post_object->post_type, $post_object->topic->parent_id, 'subscribe_notify_forum.txt', $email_vars, $post_object->post_user_id);

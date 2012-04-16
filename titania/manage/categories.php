@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id: categories.php 937 2010-03-30 01:21:50Z Tom $
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -159,6 +158,10 @@ switch ($action)
 						}
 					}
 				}
+				
+				// Set category options
+				$category_object->category_options = 0;
+				$category_object->category_options += (request_var('integrate_demo', false)) ? TITANIA_CAT_FLAG_DEMO : 0; 
 
 				// Only update category if no errors occurred from moving it
 				if (!sizeof($error))
@@ -189,6 +192,7 @@ switch ($action)
 			'S_ADD_CATEGORY' 				=> ($action == 'add') ? true : false,
 			'S_EDIT_CATEGORY' 				=> ($action == 'edit') ? true : false,
 			'S_MOVE_CATEGORY_OPTIONS'		=> (isset($category_object->parent_id)) ? generate_category_select($category_object->parent_id, true) : generate_category_select($category_id, true),
+			'S_INTEGRATE_DEMO'				=> ($category_object->category_options & TITANIA_CAT_FLAG_DEMO) ? 'checked="checked"' : '',
 		));
 	break;
 	case 'move_up' :

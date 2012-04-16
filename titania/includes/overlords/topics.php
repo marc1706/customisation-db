@@ -2,9 +2,8 @@
 /**
 *
 * @package Titania
-* @version $Id$
 * @copyright (c) 2008 phpBB Customisation Database Team
-* @license http://opensource.org/licenses/gpl-2.0.php GNU Public License
+* @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License, version 2
 *
 */
 
@@ -207,10 +206,17 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 		$switch_on_sticky = true; // Display the extra block after stickies end?  Not used when not sorting with stickies first
 
 		$sql_ary = array(
-			'SELECT' => 't.*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour',
+			'SELECT' => 't.*, u.username as topic_first_post_username, u.user_colour as topic_first_post_user_colour, ul.username as topic_last_post_username, ul.user_colour as topic_last_post_user_colour, tp.topic_posted',
 
 			'FROM'		=> array(
 				TITANIA_TOPICS_TABLE	=> 't',
+			),
+
+			'LEFT_JOIN'	=> array(
+				array(
+					'FROM'	=> array(TITANIA_TOPICS_POSTED_TABLE => 'tp'),
+					'ON'	=> 'tp.topic_id = t.topic_id AND tp.user_id = ' . (int) phpbb::$user->data['user_id'],
+				),
 			),
 
 			'WHERE' => self::sql_permissions('t.', false, true),
@@ -293,6 +299,9 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 				// We also display the queue discussion topic between validators and authors in the support area
 				$sql_ary['WHERE'] .= ' AND (t.topic_type = ' . TITANIA_SUPPORT . ' OR t.topic_type = ' . TITANIA_QUEUE_DISCUSSION . ')';
+
+				// Do not display abandoned contribs in the author's support section
+				$sql_ary['WHERE'] .= 'AND contrib.contrib_limited_support = 0';
 
 				// Additional tracking for marking items as read in each contribution
 				titania_tracking::get_tracks(TITANIA_SUPPORT, $contrib_ids);
@@ -422,6 +431,7 @@ $limit_topic_days = array(0 => $user->lang['ALL_TOPICS'], 1 => $user->lang['1_DA
 
 			$topic->__set_array($row);
 			$contrib->__set_array($row);
+			$topic->topic_posted = $row['topic_posted'];
 
 			phpbb::$template->assign_block_vars('topics', array_merge($topic->assign_details(), array(
 				'S_TOPIC_TYPE_SWITCH'		=> ($switch_on_sticky && $last_was_sticky && !$topic->topic_sticky) ? true : false,
